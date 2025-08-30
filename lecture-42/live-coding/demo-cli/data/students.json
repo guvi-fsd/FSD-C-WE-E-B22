@@ -1,0 +1,22 @@
+[
+  {
+    "name": "Kashish",
+    "city": "Bengaluru",
+    "createdAt": "2025-08-24T15:35:36.114Z"
+  },
+  {
+    "name": "Saravanan",
+    "city": "Chennai",
+    "createdAt": "2025-08-24T15:36:20.736Z"
+  },
+  {
+    "name": "Logeshwaran",
+    "city": "Mumbai",
+    "createdAt": "2025-08-24T15:37:04.875Z"
+  },
+  {
+    "name": "Test",
+    "city": "Mumbai",
+    "createdAt": "2025-08-24T15:40:38.136Z"
+  }
+]
