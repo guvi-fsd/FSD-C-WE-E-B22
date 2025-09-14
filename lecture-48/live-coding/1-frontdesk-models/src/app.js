@@ -4,6 +4,8 @@ import cors from 'cors';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import { connectMongo } from './db/mongoose.js';
+
 import authRouter from './routes/auth.routes.js';
 import servicesRouter from './routes/services.routes.js';
 import bookingsRouter from './routes/bookings.routes.js';
@@ -37,6 +39,8 @@ app.use('/bookings', bookingsRouter);
 app.use(notFound);
 app.use(errorHandler);
 
+connectMongo(process.env.MONGODB_URI);
+
 app.listen(PORT, () => {
-  console.log(`✅ FrontDesk starter listening on http://localhost:${PORT}`);
+  console.log(`FrontDesk starter listening on http://localhost:${PORT}`);
 });

@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { requireAuth } from '../middleware/requireAuth';
 const router = Router();
 
 // We will implement real login (JWT) in-class.
