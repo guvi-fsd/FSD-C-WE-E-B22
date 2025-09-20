@@ -1,0 +1,297 @@
+{
+	"info": {
+		"_postman_id": "936ec25d-bbc9-40db-9334-c934a7ac7d64",
+		"name": "FrontDesk - 2",
+		"description": "Comprehensive collection for the FrontDesk starter APIs.\n\nAuth model (current phase):\n- Use Bearer tokens: 'admin', 'manager', or 'receptionist'.\n- Optional 'x-user-id' header to simulate different staff IDs.\n- Login route returns { token, user } where token mirrors the chosen role.\n\nEnvironment variables provided for base URL, JWT, and demo IDs.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "366347",
+		"_collection_link": "https://personal-2462.postman.co/workspace/GUVI-FSD~5636959a-2154-4e7a-a0e7-9d05cf2f3283/collection/366347-936ec25d-bbc9-40db-9334-c934a7ac7d64?action=share&source=collection_link&creator=366347"
+	},
+	"item": [
+		{
+			"name": "Health",
+			"item": [
+				{
+					"name": "GET /health",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/health",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"health"
+							]
+						},
+						"description": "Simple health-check endpoint defined in app.js"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "POST /auth/login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status is 200', function () {",
+									"  pm.response.to.have.status(200);",
+									"});",
+									"",
+									"try {",
+									"  const data = pm.response.json();",
+									"  if (data && data.token) {",
+									"    pm.environment.set('jwt', data.token);",
+									"    pm.test('Saved token to {{jwt}}', function () { pm.expect(pm.environment.get('jwt')).to.eql(data.token); });",
+									"  }",
+									"} catch (e) {",
+									"  console.log('No JSON body to parse');",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"{{demo_customer_email}}\",\n  \"role\": \"manager\",\n  \"name\": \"Demo Manager\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						},
+						"description": "Stub login. Returns { token, user }. For this phase, 'token' equals role ('admin'|'manager'|'receptionist').\nCopy token to {{jwt}} to simulate roles."
+					},
+					"response": []
+				},
+				{
+					"name": "GET /auth/me",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt}}"
+							},
+							{
+								"key": "x-user-id",
+								"value": "{{x_user_id}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/auth/me",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"me"
+							]
+						},
+						"description": "Returns the current user from the demo auth middleware."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Services",
+			"item": [
+				{
+					"name": "GET /services",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt}}"
+							},
+							{
+								"key": "x-user-id",
+								"value": "{{x_user_id}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/services",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"services"
+							]
+						},
+						"description": "List services (static stub). Auth required."
+					},
+					"response": []
+				},
+				{
+					"name": "POST /services",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt}}"
+							},
+							{
+								"key": "x-user-id",
+								"value": "{{x_user_id}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Hair color\",\n  \"description\": \"Basic color\",\n  \"price\": 799,\n  \"durationMins\": 60\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/services",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"services"
+							]
+						},
+						"description": "Create a service (stub). Admin-only."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Bookings",
+			"item": [
+				{
+					"name": "GET /bookings",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt}}"
+							},
+							{
+								"key": "x-user-id",
+								"value": "{{x_user_id}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/bookings",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"bookings"
+							]
+						},
+						"description": "List bookings (stub). Role-aware:\n- receptionist: sees only own bookings (match by x-user-id)\n- manager/admin: see all"
+					},
+					"response": []
+				},
+				{
+					"name": "POST /bookings",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt}}"
+							},
+							{
+								"key": "x-user-id",
+								"value": "{{x_user_id}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"customerName\": \"{{demo_customer_name}}\",\n  \"customerEmail\": \"{{demo_customer_email}}\",\n  \"serviceId\": \"{{demo_service_id}}\",\n  \"bookingStart\": \"2025-09-21T10:00:00.000Z\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/bookings",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"bookings"
+							]
+						},
+						"description": "Create a booking (stub for this phase). Requires role in ['receptionist','manager','admin'].\nFields per booking.model.js: customerName, customerEmail, serviceId, bookingStart."
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:3000"
+		},
+		{
+			"key": "jwt",
+			"value": "manager"
+		},
+		{
+			"key": "x_user_id",
+			"value": "demo-manager-id"
+		},
+		{
+			"key": "demo_service_id",
+			"value": "656565656565656565656565"
+		},
+		{
+			"key": "demo_customer_email",
+			"value": "asha@example.com"
+		},
+		{
+			"key": "demo_customer_name",
+			"value": "Asha"
+		}
+	]
+}

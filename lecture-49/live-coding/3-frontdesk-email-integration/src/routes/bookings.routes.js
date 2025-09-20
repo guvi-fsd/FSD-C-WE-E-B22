@@ -9,7 +9,7 @@ const router = Router();
 router.post('/', 
   requireAuth,
   requireRole('receptionist', 'manager', 'admin'),
-  (req, res) => {
+  async (req, res) => {
     const { customerName, customerEmail, serviceId, bookingStart } = req.body || {};
     
     if(!customerName || !customerEmail || !serviceId || !bookingStart) {
@@ -37,7 +37,7 @@ router.post('/',
         Input: to, customerName, bookingStartISO
         Return: { messageId }
     */
-    const info = sendBookingEmail(
+    const info = await sendBookingEmail(
       { to: customerEmail, customerName, bookingStartISO: bookingStart, serviceName: "Haircut" }
     );
     email = { sent: true, messageId: info.messageId };
