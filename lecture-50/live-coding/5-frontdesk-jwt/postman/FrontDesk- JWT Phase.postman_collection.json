@@ -1,0 +1,352 @@
+{
+	"info": {
+		"_postman_id": "658304e2-169f-46a3-86d9-8cd9ff71b708",
+		"name": "FrontDesk: JWT Phase",
+		"description": "Real JWT login, protected routes, DB-backed services/bookings, Mailtrap email on booking.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "366347",
+		"_collection_link": "https://personal-2462.postman.co/workspace/GUVI-FSD~5636959a-2154-4e7a-a0e7-9d05cf2f3283/collection/366347-658304e2-169f-46a3-86d9-8cd9ff71b708?action=share&source=collection_link&creator=366347"
+	},
+	"item": [
+		{
+			"name": "Health",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/health",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"health"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Auth / Login (receptionist)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('200 OK', () => pm.response.to.have.status(200));",
+							"const json = pm.response.json();",
+							"pm.environment.set('token', json.token);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"email\": \"{{email}}\",\n  \"password\": \"{{password}}\"\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/auth/login",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"auth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Auth / Login (admin)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('200 OK', () => pm.response.to.have.status(200));",
+							"const json = pm.response.json();",
+							"pm.environment.set('token', json.token);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"email\": \"admin@frontdesk.local\",\n  \"password\": \"password123\"\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/auth/login",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"auth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Auth / Me",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/auth/me",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"auth",
+						"me"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Services / List (DB)",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/services",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"services"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Services / Create (admin only, DB)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"name\": \"Haircut Deluxe\",\n  \"description\": \"Wash + cut\",\n  \"price\": 450,\n  \"durationMins\": 40\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/services",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"services"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Bookings / Create (DB + Mailtrap email)",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"if (!pm.environment.get('bookingStartISO')) {",
+							"  pm.environment.set('bookingStartISO', new Date(Date.now() + 48*60*60*1000).toISOString());",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"customerName\": \"{{customerName}}\",\n  \"customerEmail\": \"{{customerEmail}}\",\n  \"serviceId\": \"{{serviceId}}\",\n  \"bookingStart\": \"{{bookingStartISO}}\"\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/bookings",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"bookings"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Bookings / List (role-aware, DB)",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/bookings",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"bookings"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Bookings / List by Range (role-aware, DB)",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"if (!pm.environment.get('fromISO')) {",
+							"  pm.environment.set('fromISO', new Date(Date.now() - 24*60*60*1000).toISOString());",
+							"}",
+							"if (!pm.environment.get('toISO')) {",
+							"  pm.environment.set('toISO', new Date(Date.now() + 7*24*60*60*1000).toISOString());",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/bookings?from={{fromISO}}&to={{toISO}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"bookings"
+					],
+					"query": [
+						{
+							"key": "from",
+							"value": "{{fromISO}}"
+						},
+						{
+							"key": "to",
+							"value": "{{toISO}}"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
